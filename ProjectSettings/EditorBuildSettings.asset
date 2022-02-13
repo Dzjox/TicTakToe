@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Loading/SatrtScene.unity
-    guid: c617ed782587b474fad310e3c8374410
+    path: Assets/Resources/Scenes/TicTakStart.unity
+    guid: bd4fd38a323cd83498afaeaef4bd0201
   - enabled: 1
     path: Assets/Resources/Scenes/MainMenu.unity
     guid: af8e20fdd9ab75d40b1b81ce4413b818

@@ -7,7 +7,7 @@ using TMPro;
 using System.Threading.Tasks;
 using System;
 
-namespace TicTakToe.Loading
+namespace Loading
 {
 	public class LoadingScreen : MonoBehaviour
 	{
@@ -30,12 +30,19 @@ namespace TicTakToe.Loading
 
 		private float _progress;
 
-		public async Task Load(Queue<ILoadingOperation> loadingOperations)
+		public async Task Load(Queue<ILoadingOperation> loadingOperations, bool fadeOut = true)
 		{
-			StartCoroutine(FadeOut());
-			await Task.Delay(TimeSpan.FromSeconds(_fadeOutSeconds));
-
-			StartCoroutine(UpdateProgressBar());
+			if (fadeOut)
+			{
+				StartCoroutine(FadeOut());
+				await Task.Delay(TimeSpan.FromSeconds(_fadeOutSeconds));
+				StartCoroutine(UpdateProgressBar());
+			}
+			else
+			{
+				_screenHolder.SetActive(true);
+				StartCoroutine(UpdateProgressBar());
+			}
 
 			foreach (var operation in loadingOperations)
 			{
@@ -50,6 +57,13 @@ namespace TicTakToe.Loading
 			await Task.Delay(TimeSpan.FromSeconds(_fadeInSeconds));
 		}
 
+		public async Task Load( ILoadingOperation loadingOperations, bool fadeOut = true)
+		{
+			var loadingQueue = new Queue<ILoadingOperation>();
+			loadingQueue.Enqueue(loadingOperations);
+			await Load(loadingQueue,fadeOut);
+		}
+
 		private void ResetFill()
 		{
 			_progressSlider.value = 0;
@@ -58,7 +72,7 @@ namespace TicTakToe.Loading
 
 		private void OnProgress(float progress)
 		{
-			_progress = progress;
+			_progress = progress < 1 ? progress : 1;
 		}
 
 		private async Task WaitForBarFill()

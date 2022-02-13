@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using Loading;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace TicTakToe
 {
@@ -12,7 +11,7 @@ namespace TicTakToe
 
 		public void OnNewRoundClicked()
 		{
-			//LoadingScreen.LoadScene(_gameSceneName);
+			LoadingScreen.Instance.Load(new LoadGameScene());
 		}
 
 		public void OnExitClicked()

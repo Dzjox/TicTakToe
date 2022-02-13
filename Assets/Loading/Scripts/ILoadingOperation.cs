@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 
-namespace TicTakToe.Loading
+namespace Loading
 {
     public interface ILoadingOperation
     {
-        string Description { get; set; }
+        string Description { get;}
 
         Task Load(Action<float> onProgress);
     }
