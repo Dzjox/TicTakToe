@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.Threading.Tasks;
 using System;
+using System.Threading;
 
 namespace Loading
 {
@@ -34,15 +35,16 @@ namespace Loading
 		{
 			if (fadeOut)
 			{
-				StartCoroutine(FadeOut());
-				await Task.Delay(TimeSpan.FromSeconds(_fadeOutSeconds));
-				StartCoroutine(UpdateProgressBar());
+				var taskFadeOut = FadeOut();
+				await taskFadeOut;
+				while (!taskFadeOut.IsCompleted) { await Task.Delay(1); }
 			}
 			else
 			{
 				_screenHolder.SetActive(true);
-				StartCoroutine(UpdateProgressBar());
 			}
+
+			StartCoroutine(UpdateProgressBar());
 
 			foreach (var operation in loadingOperations)
 			{
@@ -53,8 +55,9 @@ namespace Loading
 				await WaitForBarFill();
 			}
 
-			StartCoroutine(FadeIn());
-			await Task.Delay(TimeSpan.FromSeconds(_fadeInSeconds));
+			var taskFadeIn = FadeIn();
+			await taskFadeIn;
+			while (!taskFadeIn.IsCompleted) { await Task.Delay(1);}
 		}
 
 		public async Task Load( ILoadingOperation loadingOperations, bool fadeOut = true)
@@ -94,58 +97,35 @@ namespace Loading
 			}
 		}
 
-		private IEnumerator LoadingRoutine(string sceneName, bool useFadeOut = true)
-		{
-			AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
-			asyncOperation.allowSceneActivation = false;
-
-			if (useFadeOut) yield return FadeOut();
-
-			asyncOperation.allowSceneActivation = true;
-
-			_screenHolder.SetActive(true);
-
-			while (!asyncOperation.isDone)
-			{
-				_progressSlider.value = asyncOperation.progress;
-
-				yield return new WaitForFixedUpdate();
-			}
-
-			yield return new WaitForSeconds(2); //Delay to see the loading screen
-
-			_screenHolder.SetActive(false);
-
-			yield return FadeIn();
-		}
-
-		private IEnumerator FadeOut()
+		private async Task FadeOut()
 		{
 			_fadeImage.enabled = true;
 			_fadeImage.color = new Color(0, 0, 0, 0);
-			var countDown = Time.time + _fadeOutSeconds;
+			var startTime = Time.time;
+			var endTime = Time.time + _fadeOutSeconds;
 			float alfa = 0;
 			do
 			{
-				alfa += Time.fixedDeltaTime / _fadeOutSeconds;
+				alfa = Mathf.InverseLerp(startTime, endTime, Time.time);
 				_fadeImage.color = new Color(0, 0, 0, alfa);
-				yield return new WaitForFixedUpdate();
-			} while (countDown > Time.time);
+				await Task.Delay(1);
+			} while (endTime > Time.time);
 			_screenHolder.SetActive(true);
 		}
 
-		private IEnumerator FadeIn()
+		private async Task FadeIn()
 		{
 			_screenHolder.SetActive(false);
 			_fadeImage.color = new Color(0, 0, 0, 1);
-			var countDown = Time.time + _fadeInSeconds;
+			var startTime = Time.time;
+			var endTime = Time.time + _fadeInSeconds;
 			float alfa = 1;
 			do
 			{
-				alfa -= Time.fixedDeltaTime / _fadeInSeconds;
+				alfa = Mathf.InverseLerp(endTime, startTime, Time.time);
 				_fadeImage.color = new Color(0, 0, 0, alfa);
-				yield return new WaitForFixedUpdate();
-			} while (countDown > Time.time);
+				await Task.Delay(1);
+			} while (endTime > Time.time);
 			_fadeImage.enabled = false;
 		}
 	}
