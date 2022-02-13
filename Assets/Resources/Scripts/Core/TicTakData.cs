@@ -1,27 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TicTakToe
 {
-	public class TicTakData : MonoBehaviour
+	public class TicTakData
 	{
 		private static TicTakData _instance;
-		public static TicTakData Instance { get { return _instance; } }
-
-		private void Awake()
+		public static TicTakData Instance
 		{
-			if (_instance != null && _instance != this)
+			get 
 			{
-				Destroy(this.gameObject);
+				if (_instance == null)
+					_instance = new TicTakData();
+				return _instance;
 			}
-			else
-			{
-				_instance = this;
-			}
+		}
 
+		private TicTakData()
+		{
 			GetDataFromPlayerPrefs();
-			DontDestroyOnLoad(this.gameObject);
 		}
 
 		public int Columns { get; set; }
@@ -36,7 +32,7 @@ namespace TicTakToe
 			Columns = PlayerPrefs.GetInt("ColumsCount", 3);
 			Rows = PlayerPrefs.GetInt("RowsCount", 3);
 			CountToWin = PlayerPrefs.GetInt("CountToWin", 3);
-			Score = PlayerPrefs.GetInt("PlayerScore", 3);
+			Score = PlayerPrefs.GetInt("PlayerScore", 0);
 		}
 	}
 }
