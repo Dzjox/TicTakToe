@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace TicTakToe
 {
-	public class ScoreCounter : UIBehaviour
+	public class ScoreCounter : MonoBehaviour
 	{
 		[SerializeField] private TextMeshProUGUI _score;
 		[SerializeField] private int _scoreForOneWin = 100;

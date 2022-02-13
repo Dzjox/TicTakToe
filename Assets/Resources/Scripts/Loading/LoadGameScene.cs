@@ -12,7 +12,7 @@ namespace TicTakToe
 		public async Task Load(Action<float> onProgress)
 		{
 			onProgress?.Invoke(0.5f);
-			var loadOp = SceneManager.LoadSceneAsync("TicTakGame", LoadSceneMode.Additive);
+			var loadOp = SceneManager.LoadSceneAsync("TicTakGame", LoadSceneMode.Single);
 			while (loadOp.isDone == false)
 			{
 				await Task.Delay(1);

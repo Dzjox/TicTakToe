@@ -1,36 +1,33 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace TicTakToe
 {
-	public class TicTakRound : UIBehaviour
+	public enum WinAxis
 	{
-		[SerializeField] private TicTakGrid _ticTakGrid;
-		[Space]
-		[SerializeField] private int _rowCountToWin = 3;
+		None,
+		Horizontal,
+		Vertical,
+		DiagonalUL,
+		DiagonalDL
+	}
 
+	public class TicTakRound
+	{
+		private TicTakGrid _ticTakGrid;	
+		private int _rowCountToWin = 3;
 		private bool _isItExTurne; //is player turne
 		private List<TicTakCell> _winCells;
-
-		public delegate void RoundEndHandler(bool isExWin);
-		public static event RoundEndHandler RoundEnd;
-
 		private int _columnCount;
+		
+		public Action<bool> RoundEnd;
 
-		protected override void OnEnable()
+		public TicTakRound (TicTakGrid ticTakGrid)
 		{
+			_ticTakGrid = ticTakGrid;
 			_rowCountToWin = TicTakData.Instance.CountToWin;
 			_columnCount = TicTakData.Instance.Columns;
 
-
-			Init();
-		}
-
-		public void Init()
-		{
 			for (int i = 0; i < _ticTakGrid.Cells.Length; i++)
 			{
 				_ticTakGrid.Cells[i].OnClick += OnCellClicked;
@@ -39,14 +36,18 @@ namespace TicTakToe
 			_isItExTurne = UnityEngine.Random.Range(0, 2) == 1;
 
 			_winCells = new List<TicTakCell>(_rowCountToWin);
+
+			RoundEnd += OnRoundEnd;
 		}
 
-		protected override void OnDestroy()
+		
+		private void OnRoundEnd(bool isExWin)
 		{
 			for (int i = 0; i < _ticTakGrid.Cells.Length; i++)
 			{
 				_ticTakGrid.Cells[i].OnClick -= OnCellClicked;
 			}
+			RoundEnd -= OnRoundEnd;
 		}
 
 		private void OnCellClicked(TicTakCell cell)
@@ -62,7 +63,7 @@ namespace TicTakToe
 						{
 							_winCells[i].SetCrossLine(winAxis);
 						}
-						if (RoundEnd != null) RoundEnd(_isItExTurne);
+						RoundEnd?.Invoke(_isItExTurne);
 					}
 					_isItExTurne = !_isItExTurne;
 				}
@@ -80,7 +81,7 @@ namespace TicTakToe
 						{
 							_winCells[i].SetCrossLine(winAxis);
 						}
-						if (RoundEnd != null) RoundEnd(_isItExTurne);
+						RoundEnd?.Invoke(_isItExTurne);
 					}
 					_isItExTurne = !_isItExTurne;
 				}
@@ -161,14 +162,5 @@ namespace TicTakToe
 			}
 			return cellsList[UnityEngine.Random.Range(0, cellsList.Count)];
 		}
-	}
-
-	public enum WinAxis
-	{
-		None,
-		Horizontal,
-		Vertical,
-		DiagonalUL,
-		DiagonalDL
 	}
 }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace TicTakToe
 {
-	public class TicTakGrid : UIBehaviour
+	public class TicTakGrid : MonoBehaviour
 	{
 		[SerializeField] private GameObject _cellPrefab;
 		[SerializeField] private GameObject _linePrefab;
@@ -23,34 +23,30 @@ namespace TicTakToe
 
 		public TicTakCell[] Cells { get; private set; }
 
-		protected override void OnEnable()
+		public void Init()
 		{
 			_rowCount = TicTakData.Instance.Rows;
 			_columnCount = TicTakData.Instance.Columns;
 
-			Init();
-		}
-		public void Init()
-		{
 			var height = _gridTransform.rect.height;
 			var width = _gridTransform.rect.width;
 
-			var cellSide = (int)Mathf.Min(
+			var cellSize = (int)Mathf.Min(
 				(height - _lineThickness * (_rowCount - 1)) / _rowCount,
 				(width - _lineThickness * (_columnCount - 1)) / _columnCount);
 
-			_gridLayoutGroup.cellSize = new Vector2(cellSide, cellSide);
+			_gridLayoutGroup.cellSize = new Vector2(cellSize, cellSize);
 			_gridLayoutGroup.spacing = new Vector2(_lineThickness, _lineThickness);
 			_gridLayoutGroup.constraintCount = _columnCount;
 
-			height = (cellSide + _lineThickness) * _rowCount - _lineThickness;
-			width = (cellSide + _lineThickness) * _columnCount - _lineThickness;
+			height = (cellSize + _lineThickness) * _rowCount - _lineThickness;
+			width = (cellSize + _lineThickness) * _columnCount - _lineThickness;
 
 			_backgroundTransform.sizeDelta = new Vector2(width, height);
-			_backgroundVertical.padding = new RectOffset(0, 0, cellSide, cellSide);
-			_backgroundVertical.spacing = cellSide;
-			_backgroundHorizontal.padding = new RectOffset(cellSide, cellSide, 0, 0);
-			_backgroundHorizontal.spacing = cellSide;
+			_backgroundVertical.padding = new RectOffset(0, 0, cellSize, cellSize);
+			_backgroundVertical.spacing = cellSize;
+			_backgroundHorizontal.padding = new RectOffset(cellSize, cellSize, 0, 0);
+			_backgroundHorizontal.spacing = cellSize;
 
 
 			Cells = new TicTakCell[_rowCount * _columnCount];

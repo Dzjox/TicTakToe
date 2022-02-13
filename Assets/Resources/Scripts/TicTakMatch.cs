@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Loading;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,16 +8,20 @@ namespace TicTakToe
 {
 	public class TicTakMatch : MonoBehaviour
 	{
-		[SerializeField] private string _loadSceneAfterMatch = "MainMenu";
+		[SerializeField] private TicTakGrid _ticTakGrid;
+
+		private TicTakRound _ticTakRound;
 
 		private void Awake()
 		{
-			TicTakRound.RoundEnd += OnRoundEnd;
+			_ticTakGrid.Init();
+			_ticTakRound = new TicTakRound(_ticTakGrid);
+			_ticTakRound.RoundEnd += OnRoundEnd;
 		}
 
 		private void OnDestroy()
 		{
-			TicTakRound.RoundEnd -= OnRoundEnd;
+			_ticTakRound.RoundEnd -= OnRoundEnd;
 		}
 
 		private void OnRoundEnd(bool isPlayerWin)
@@ -33,9 +38,10 @@ namespace TicTakToe
 			var message = isPlayerWin ? "You won! Hey!" : "You lose. Next time.";
 			Bloker.Instance.Message(message);
 			yield return new WaitForSeconds(2);
+			LoadingScreen.Instance.Load(new LoadMainMenu());
+			yield return new WaitForSeconds(0.5f);
 			Bloker.Instance.RemoveMessage();
-			yield return new WaitForSeconds(2);
-			//LoadingScreen.LoadScene(_loadSceneAfterMatch);
+			Bloker.Instance.UnBlok();
 		}
 
 
