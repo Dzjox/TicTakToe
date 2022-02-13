@@ -4,37 +4,40 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ScoreCounter : UIBehaviour
+namespace TicTakToe
 {
-	[SerializeField] private TextMeshProUGUI _score;
-	[SerializeField] private int _scoreForOneWin = 100;
-
-
-	private void Awake()
+	public class ScoreCounter : UIBehaviour
 	{
-		CheckMatchResult();
-		_score.text = "Score: " + PlayerPrefs.GetInt("PlayerScore", 0).ToString();
-	}
+		[SerializeField] private TextMeshProUGUI _score;
+		[SerializeField] private int _scoreForOneWin = 100;
 
-	public void ResetScore()
-	{
-		_score.text = "Score: 0";
 
-		TicTakData.Instance.Score = 0;
-		PlayerPrefs.SetInt("CountToWin", 0);
-	}
-
-	private void CheckMatchResult()
-	{
-		if (TicTakData.Instance.MatchPlayed)
+		private void Awake()
 		{
-			var shift = TicTakData.Instance.IsPlayerWin ? _scoreForOneWin : -_scoreForOneWin;
+			CheckMatchResult();
+			_score.text = "Score: " + PlayerPrefs.GetInt("PlayerScore", 0).ToString();
+		}
 
-			TicTakData.Instance.Score += shift;
-			PlayerPrefs.SetInt("PlayerScore", TicTakData.Instance.Score);
-			_score.text = "Score: " + TicTakData.Instance.Score.ToString();
+		public void ResetScore()
+		{
+			_score.text = "Score: 0";
 
-			TicTakData.Instance.MatchPlayed = false;
+			TicTakData.Instance.Score = 0;
+			PlayerPrefs.SetInt("CountToWin", 0);
+		}
+
+		private void CheckMatchResult()
+		{
+			if (TicTakData.Instance.MatchPlayed)
+			{
+				var shift = TicTakData.Instance.IsPlayerWin ? _scoreForOneWin : -_scoreForOneWin;
+
+				TicTakData.Instance.Score += shift;
+				PlayerPrefs.SetInt("PlayerScore", TicTakData.Instance.Score);
+				_score.text = "Score: " + TicTakData.Instance.Score.ToString();
+
+				TicTakData.Instance.MatchPlayed = false;
+			}
 		}
 	}
 }

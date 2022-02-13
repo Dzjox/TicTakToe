@@ -1,50 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Bloker : MonoBehaviour
+namespace TicTakToe
 {
-	private static Bloker _instance;
-	public static Bloker Instance { get { return _instance; } }
-
-	private void Awake()
+	public class Bloker : MonoBehaviour
 	{
-		if (_instance != null && _instance != this)
+		public static Bloker Instance { get; private set; }
+
+		private void Awake()
 		{
-			Destroy(this.gameObject);
-		}
-		else
-		{
-			_instance = this;
+			Instance = this;
+			DontDestroyOnLoad(this);
 		}
 
-	}
-
-	[SerializeField] private Image _image;
-	[SerializeField] private GameObject _messageHolder;
-	[SerializeField] private TextMeshProUGUI _text;
+		[SerializeField] private Image _image;
+		[SerializeField] private GameObject _messageHolder;
+		[SerializeField] private TextMeshProUGUI _text;
 
 
-	public void Blok()
-	{
-		_image.enabled = true;
-	}
+		public void Blok()
+		{
+			_image.enabled = true;
+		}
 
-	public void UnBlok()
-	{
-		_image.enabled = false;
-	}
+		public void UnBlok()
+		{
+			_image.enabled = false;
+		}
 
-	public void Message(string message)
-	{
-		_messageHolder.SetActive(true);
-		_text.text = message;
-	}
+		public void Message(string message)
+		{
+			_messageHolder.SetActive(true);
+			_text.text = message;
+		}
 
-	public void RemoveMessage()
-	{
-		_messageHolder.SetActive(false);
+		public void RemoveMessage()
+		{
+			_messageHolder.SetActive(false);
+		}
 	}
 }
